@@ -7,6 +7,10 @@ android {
     namespace = "africa.amoper.app"
     compileSdk = 34
 
+    val amoperApiUrl = providers.gradleProperty("AMOPER_API_URL")
+        .orElse("https://amoperlogistic.com/")
+        .get()
+
     defaultConfig {
         applicationId = "africa.amoper.app"
         minSdk = 24
@@ -14,21 +18,25 @@ android {
         versionCode = 1
         versionName = "1.0.0"
 
-        // Set the PHP website/API URL with -PAMOPER_API_URL="https://amoperlogistic.com/".
-        // It must end with /. Default is the Android emulator alias for local XAMPP.
-        val amoperApiUrl = providers.gradleProperty("AMOPER_API_URL")
-            .orElse("https://amoperlogistic.com/")
-            .get()
-        buildConfigField("String", "API_BASE_URL", "\"$amoperApiUrl\"")
+        buildConfigField(
+            "String",
+            "API_BASE_URL",
+            "\"$amoperApiUrl\""
+        )
     }
 
     buildTypes {
+        debug {
+            isMinifyEnabled = false
+        }
+
         release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-        }
-        debug {
-            buildConfigField("String", "API_BASE_URL", "\"$amoperApiUrl\"")
+
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 
@@ -45,6 +53,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
     kotlinOptions {
         jvmTarget = "17"
     }
@@ -64,28 +73,27 @@ dependencies {
 
     val composeBom = platform("androidx.compose:compose-bom:2024.06.00")
     implementation(composeBom)
+
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended")
+
     debugImplementation("androidx.compose.ui:ui-tooling")
 
     implementation("androidx.navigation:navigation-compose:2.7.7")
 
-    // Networking
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
-    // Local token storage
     implementation("androidx.datastore:datastore-preferences:1.1.1")
 
-    // Images
     implementation("io.coil-kt:coil-compose:2.6.0")
 
-    // Driver GPS
     implementation("com.google.android.gms:play-services-location:21.3.0")
 
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.4")
